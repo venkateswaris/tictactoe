@@ -75,7 +75,7 @@ public class Board {
         for (int col = 0; col < SIZE; col++) {
             int value = 0;
             for (int row = 0; row < SIZE; row++) {
-                value +=  getPlayerValueAt(row, col);
+                value += getPlayerValueAt(row, col);
             }
             return getWinner(value);
         }
@@ -95,9 +95,7 @@ public class Board {
     }
 
     private Optional<Player> getWinner(int rowValues) {
-        if (rowValues == Player.COMPUTER.getWinningValue()) return Optional.of(Player.COMPUTER);
-        if (rowValues == Player.HUMAN.getWinningValue()) return Optional.of(Player.HUMAN);
-        return Optional.empty();
+        return Arrays.asList(Player.values()).stream().filter(p -> p.getWinningValue() == rowValues).findFirst();
     }
 
     private boolean isCellEmpty(int x, int y) throws InvalidCellException {
