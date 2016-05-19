@@ -20,4 +20,8 @@ public enum Player {
     public String getName() {
         return name;
     }
+
+    public int getWinningValue() {
+        return 3 * this.value;
+    }
 }

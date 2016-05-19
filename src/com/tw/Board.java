@@ -62,11 +62,11 @@ public class Board {
 
     private Optional<Player> hasRowWiseWinner() throws InvalidCellException {
         for (int row = 0; row < SIZE; row++) {
-            ArrayList<Player> rowValues = new ArrayList<>();
+            int value = 0;
             for (int col = 0; col < SIZE; col++) {
-                rowValues.add(cells[getIndex(row, col)]);
+                value += getPlayerValueAt(row, col);
             }
-            Player winner = getWinner(rowValues);
+            Player winner = getWinner(value);
             if (winner != null)
                 return Optional.of(winner);
         }
@@ -75,11 +75,11 @@ public class Board {
 
     private Optional<Player> hasColumnWiseWinner() throws InvalidCellException {
         for (int col = 0; col < SIZE; col++) {
-            ArrayList<Player> colValues = new ArrayList<>();
+            int value = 0;
             for (int row = 0; row < SIZE; row++) {
-                colValues.add(cells[getIndex(row, col)]);
+                value +=  getPlayerValueAt(row, col);
             }
-            Player winner = getWinner(colValues);
+            Player winner = getWinner(value);
             if (winner != null)
                 return Optional.of(winner);
         }
@@ -87,21 +87,21 @@ public class Board {
     }
 
     private Optional<Player> hasDiagonalWinner() throws InvalidCellException {
-        ArrayList<Player> rowValues = new ArrayList<>();
+        int value = 0;
         for (int index = 0; index < SIZE; index++) {
-            rowValues.add(cells[getIndex(index, index)]);
+            value += getPlayerValueAt(index, index);
         }
-        return Optional.ofNullable(getWinner(rowValues));
+        return Optional.ofNullable(getWinner(value));
     }
 
-    private Player getWinner(ArrayList<Player> rowValues) {
-        if (isPlayerAWinner(rowValues, Player.COMPUTER)) return Player.COMPUTER;
-        if (isPlayerAWinner(rowValues, Player.HUMAN)) return Player.HUMAN;
+    private int getPlayerValueAt(int row, int col) throws InvalidCellException {
+        return cells[getIndex(row, col)] != null ? cells[getIndex(row, col)].getValue() : 0;
+    }
+
+    private Player getWinner(int rowValues) {
+        if (rowValues == Player.COMPUTER.getWinningValue()) return Player.COMPUTER;
+        if (rowValues == Player.HUMAN.getWinningValue()) return Player.HUMAN;
         return null;
-    }
-
-    private boolean isPlayerAWinner(ArrayList<Player> values, Player player) {
-    return values.stream().filter(player::equals).count() == CELLS_TO_WIN;
     }
 
     private boolean isCellEmpty(int x, int y) throws InvalidCellException {
