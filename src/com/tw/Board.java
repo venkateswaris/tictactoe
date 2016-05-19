@@ -14,7 +14,7 @@ public class Board {
     private final int CELLS_TO_WIN = 3;
 
     public String[] cells = new String[NUMBER_OF_CELLS];
-    private String lastPlayerBy = "";
+    private Optional<String> lastPlayerBy = Optional.empty();
 
     public static Board create() {
         return new Board();
@@ -30,12 +30,12 @@ public class Board {
             throw new CellNotEmptyException();
         }
 
-        if (this.lastPlayerBy.equals(type)) {
+        if (this.lastPlayerBy.isPresent() && this.lastPlayerBy.get().equals(type)) {
             throw new NotYourTurnException();
         }
 
         cells[getIndex(x, y)] = type;
-        this.lastPlayerBy = type;
+        this.lastPlayerBy = Optional.of(type);
         return true;
     }
 
