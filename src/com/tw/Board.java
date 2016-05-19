@@ -66,9 +66,7 @@ public class Board {
             for (int col = 0; col < SIZE; col++) {
                 value += getPlayerValueAt(row, col);
             }
-            Player winner = getWinner(value);
-            if (winner != null)
-                return Optional.of(winner);
+            return getWinner(value);
         }
         return Optional.empty();
     }
@@ -79,9 +77,7 @@ public class Board {
             for (int row = 0; row < SIZE; row++) {
                 value +=  getPlayerValueAt(row, col);
             }
-            Player winner = getWinner(value);
-            if (winner != null)
-                return Optional.of(winner);
+            return getWinner(value);
         }
         return Optional.empty();
     }
@@ -91,17 +87,17 @@ public class Board {
         for (int index = 0; index < SIZE; index++) {
             value += getPlayerValueAt(index, index);
         }
-        return Optional.ofNullable(getWinner(value));
+        return getWinner(value);
     }
 
     private int getPlayerValueAt(int row, int col) throws InvalidCellException {
         return cells[getIndex(row, col)] != null ? cells[getIndex(row, col)].getValue() : 0;
     }
 
-    private Player getWinner(int rowValues) {
-        if (rowValues == Player.COMPUTER.getWinningValue()) return Player.COMPUTER;
-        if (rowValues == Player.HUMAN.getWinningValue()) return Player.HUMAN;
-        return null;
+    private Optional<Player> getWinner(int rowValues) {
+        if (rowValues == Player.COMPUTER.getWinningValue()) return Optional.of(Player.COMPUTER);
+        if (rowValues == Player.HUMAN.getWinningValue()) return Optional.of(Player.HUMAN);
+        return Optional.empty();
     }
 
     private boolean isCellEmpty(int x, int y) throws InvalidCellException {
