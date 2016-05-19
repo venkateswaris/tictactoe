@@ -1,12 +1,15 @@
 package com.tw;
 
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum Player {
 
     COMPUTER("computer", 1000),HUMAN("human", 100);
 
     private final int value;
-    public final String name;
+    private final String name;
 
     Player(String name, int value) {
         this.name = name;
@@ -17,11 +20,11 @@ public enum Player {
         return value;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public int getWinningValue() {
         return 3 * this.value;
+    }
+
+    public static List<Player> asList() {
+        return Arrays.asList(Player.values());
     }
 }

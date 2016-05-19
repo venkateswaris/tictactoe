@@ -95,7 +95,7 @@ public class Board {
     }
 
     private Optional<Player> getWinner(int rowValues) {
-        return Arrays.asList(Player.values()).stream().filter(p -> p.getWinningValue() == rowValues).findFirst();
+        return Player.asList().stream().filter(p -> p.getWinningValue() == rowValues).findFirst();
     }
 
     private boolean isCellEmpty(int x, int y) throws InvalidCellException {
