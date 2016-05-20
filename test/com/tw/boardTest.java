@@ -79,6 +79,30 @@ public class BoardTest {
     }
 
     @Test
+    public void shouldGetComputerAsWinnerOnAnyColumn() throws MoveNotAllowedException {
+        Board board = Board.create();
+        for( int i =0 ; i < 3; i++) {
+            board.move(COMPUTER, i, 1);
+            if( i != 2 ) {
+                board.move(HUMAN, i, 0);
+            }
+        }
+        assertEquals(COMPUTER, board.whoWon().get());
+    }
+
+    @Test
+    public void shouldGetComputerAsWinnerOnAnyRow() throws MoveNotAllowedException {
+        Board board = Board.create();
+        for( int i =0 ; i < 3; i++) {
+            board.move(COMPUTER, 1, i);
+            if( i != 2 ) {
+                board.move(HUMAN, 0, i);
+            }
+        }
+        assertEquals(COMPUTER, board.whoWon().get());
+    }
+
+    @Test
     public void shouldGetComputerAsWinnerOnDiagonal() throws MoveNotAllowedException {
         Board board = Board.create();
         board.move(COMPUTER, 0, 0);

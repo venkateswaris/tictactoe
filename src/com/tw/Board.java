@@ -5,6 +5,7 @@ import com.tw.exceptions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.tw.Constants.NUMBER_OF_CELLS;
 
@@ -66,7 +67,8 @@ public class Board {
             for (int col = 0; col < SIZE; col++) {
                 value += getPlayerValueAt(row, col);
             }
-            return getWinner(value);
+            if (getWinner(value).isPresent())
+                return getWinner(value);
         }
         return Optional.empty();
     }
@@ -77,7 +79,8 @@ public class Board {
             for (int row = 0; row < SIZE; row++) {
                 value += getPlayerValueAt(row, col);
             }
-            return getWinner(value);
+            if (getWinner(value).isPresent())
+                return getWinner(value);
         }
         return Optional.empty();
     }
