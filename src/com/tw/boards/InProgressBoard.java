@@ -1,46 +1,57 @@
-package com.tw;
+package com.tw.boards;
 
-import com.tw.exceptions.*;
+import com.tw.Player;
+import com.tw.exceptions.CellNotEmptyException;
+import com.tw.exceptions.InvalidCellException;
+import com.tw.exceptions.MoveNotAllowedException;
+import com.tw.exceptions.NotYourTurnException;
 
 import java.util.Arrays;
 import java.util.Optional;
 
-public class Board {
+public class InProgressBoard extends Board {
 
-    private final int SIZE = 3;
-    private final int NUMBER_OF_CELLS = SIZE * SIZE;
+    private Player lastPlayerBy;
 
-    public Player[] cells = new Player[NUMBER_OF_CELLS];
-    private Optional<Player> lastPlayerBy = Optional.empty();
-
-    public static Board create() {
-        return new Board();
+    static InProgressBoard create(Player[] cells, Player type) {
+        return new InProgressBoard(cells, type);
     }
 
-    public boolean move(Player type, int x, int y) throws MoveNotAllowedException {
+    private InProgressBoard(Player[] cells, Player type) {
+        this.cells = cells;
+        this.lastPlayerBy = type;
+    }
 
-        if (isGameOver()) {
-            throw new GameOverException();
-        }
+    public Board move(Player type, int x, int y) throws MoveNotAllowedException {
 
         if (!isCellEmpty(x, y)) {
             throw new CellNotEmptyException();
         }
 
-        if (this.lastPlayerBy.isPresent() && this.lastPlayerBy.get().equals(type)) {
+        if (this.lastPlayerBy.equals(type)) {
             throw new NotYourTurnException();
         }
 
         cells[getIndex(x, y)] = type;
-        this.lastPlayerBy = Optional.of(type);
-        return true;
+        this.lastPlayerBy = type;
+
+        return isGameOver() ? GameOverBoard.create(cells, whoWon()) : this;
     }
 
-    public boolean isGameOver() throws InvalidCellException {
+    private boolean isCellEmpty(int x, int y) throws InvalidCellException {
+        return cells[getIndex(x, y)] == null;
+    }
+
+
+    private boolean isGameADraw() {
+        return Arrays.asList(this.cells).stream().allMatch(c -> c != null);
+    }
+
+    private boolean isGameOver() throws InvalidCellException {
         return isGameADraw() || whoWon().isPresent();
     }
 
-    public Optional<Player> whoWon() throws InvalidCellException {
+    private Optional<Player> whoWon() throws InvalidCellException {
         if (hasRowWiseWinner().isPresent())
             return hasRowWiseWinner();
 
@@ -54,9 +65,11 @@ public class Board {
         return Optional.empty();
     }
 
-    private boolean isGameADraw() {
-        return Arrays.asList(cells).stream().allMatch(c -> c != null);
+    public Player playerAt(int x, int y) throws InvalidCellException {
+        return cells[getIndex(x, y)];
     }
+
+    int SIZE = 3;
 
     private Optional<Player> hasRowWiseWinner() throws InvalidCellException {
         for (int row = 0; row < SIZE; row++) {
@@ -110,27 +123,12 @@ public class Board {
     }
 
     private int getPlayerValueAt(int row, int col) throws InvalidCellException {
-        return cells[getIndex(row, col)] != null ? cells[getIndex(row, col)].getValue() : 0;
+        Player player = playerAt(row, col);
+        return player != null ? player.getValue() : 0;
     }
+
 
     private Optional<Player> getWinner(int rowValues) {
         return Player.asList().stream().filter(p -> p.getWinningValue() == rowValues).findFirst();
     }
-
-    private boolean isCellEmpty(int x, int y) throws InvalidCellException {
-        return cells[getIndex(x, y)] == null;
-    }
-
-    public Player playerAt(int x, int y) throws InvalidCellException {
-        return cells[getIndex(x, y)];
-    }
-
-    private int getIndex(int x, int y) throws InvalidCellException {
-        int index = x * 3 + y;
-        if (x < 0 || y < 0 || index >= NUMBER_OF_CELLS) {
-            throw new InvalidCellException();
-        }
-        return index;
-    }
-
 }
