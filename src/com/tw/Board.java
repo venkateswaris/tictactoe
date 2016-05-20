@@ -2,17 +2,13 @@ package com.tw;
 
 import com.tw.exceptions.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static com.tw.Constants.NUMBER_OF_CELLS;
 
 public class Board {
 
     private final int SIZE = 3;
-    private final int CELLS_TO_WIN = 3;
+    private final int NUMBER_OF_CELLS = SIZE * SIZE;
 
     public Player[] cells = new Player[NUMBER_OF_CELLS];
     private Optional<Player> lastPlayerBy = Optional.empty();
@@ -51,8 +47,9 @@ public class Board {
         if (hasColumnWiseWinner().isPresent())
             return hasColumnWiseWinner();
 
-        if (hasDiagonalWinner().isPresent())
-            return hasDiagonalWinner();
+        Optional<Player> hasDiagonalWinner = hasDiagonalWinner();
+        if (hasDiagonalWinner.isPresent())
+            return hasDiagonalWinner;
 
         return Optional.empty();
     }
@@ -86,9 +83,28 @@ public class Board {
     }
 
     private Optional<Player> hasDiagonalWinner() throws InvalidCellException {
+        Optional<Player> leftDiagonalWinner = getLeftDiagonalWinner();
+
+        if (leftDiagonalWinner.isPresent()) {
+            return leftDiagonalWinner;
+        }
+
+        return getRightDiagonalWinner();
+    }
+
+    private Optional<Player> getLeftDiagonalWinner() throws InvalidCellException {
         int value = 0;
         for (int index = 0; index < SIZE; index++) {
             value += getPlayerValueAt(index, index);
+        }
+
+        return getWinner(value);
+    }
+
+    private Optional<Player> getRightDiagonalWinner() throws InvalidCellException {
+        int value = 0;
+        for (int rowIndex = 0, columnIndex = SIZE - 1; rowIndex < SIZE && columnIndex >= 0; rowIndex++, columnIndex--) {
+            value += getPlayerValueAt(rowIndex, columnIndex);
         }
         return getWinner(value);
     }
